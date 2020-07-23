@@ -11,9 +11,6 @@
     <Product>csharp</Product>
     <Description>A command-line tool to run csharp code</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>csharp.pfx</AssemblyOriginatorKeyFile>
-    <DelaySign>false</DelaySign>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
