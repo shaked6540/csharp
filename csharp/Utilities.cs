@@ -14,7 +14,7 @@ namespace csharp
         public static readonly string ExecuteablePath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + "/";
         public static readonly string ScriptFolder = ExecuteablePath + "Scripts";
         public static readonly string ConfigPath = ExecuteablePath + "Config.json";
-        public static readonly JsonSerializerSettings settings = new JsonSerializerSettings() { ContractResolver = new MyContractResolver() };
+        public static readonly JsonSerializerSettings settings = new JsonSerializerSettings() { ContractResolver = new MyContractResolver(), Formatting = Formatting.Indented };
         public static void WriteInColor(object value, ConsoleColor color)
         {
             Console.ForegroundColor = color;
