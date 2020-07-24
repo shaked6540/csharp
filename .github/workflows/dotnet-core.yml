@@ -17,6 +17,7 @@ jobs:
         dotnet-version: 3.1.301
     - name: Publish framework dependent
       run: |
+        pwd
         dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r win-x64
         dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r win-x86
         dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r linux-arm
