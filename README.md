@@ -11,13 +11,21 @@ Run c# code from the command line, like python or javascript.
 - Save scripts
 - Single executeable, ready to run out of the box
 - Supports Windows, Linux, macOS, and Android (Instructions to install on android will be at the bottom)
+## Built-in functions
+### help
+`help` is a function that takes any object or a [`Type`](https://docs.microsoft.com/en-us/dotnet/api/system.type?view=netcore-3.1) and prints all its methods, properties, fields and events. It's useful because there is no auto completion in the command line, and sometimes its faster to just type `help(typeof(int))` than to open the documentaion.
+![img](https://i.imgur.com/x4QSEXh.png)
+### variables
+`variables` is a function that prints all the variables that exist in the current script session and their values.
+![img](https://i.imgur.com/B9XqmBW.png)
+
 
 # Installing
-You don't need to do anything special to install `csharp`. I recommend adding the executable location to `PATH`.
+You don't need to do anything special to install `csharp`, just grab the latest version from the [releases](https://github.com/shaked6540/csharp/releases) page or build it by yourself and drop it in a folder. I recommend adding the executable location to `PATH`.
 
-[Here is how to do it on Linux](https://unix.stackexchange.com/a/26059)
+[Here is how to add a value to `PATH` on Linux](https://unix.stackexchange.com/a/26059)
 
-[Here is how to do it on Windows](https://docs.telerik.com/teststudio/features/test-runners/add-path-environment-variables)
+[Here is how to add a value to `PATH` on Windows](https://docs.telerik.com/teststudio/features/test-runners/add-path-environment-variables)
 
 # Configuring
 
