@@ -26,27 +26,27 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: framework-dependent-win-x64
-        path: /home/**/csharp/bin/Release/win-x64/publish
+        path: ./**/csharp/bin/Release/win-x64/publish
     - name: Upload framework-dependent-win-x86 Artifact
       uses: actions/upload-artifact@v2
       with:
         name: framework-dependent-win-x86
-        path: /home/**/csharp/bin/Release/win-x86/publish
+        path: ./**/csharp/bin/Release/win-x86/publish
     - name: Upload framework-dependent-linux-arm Artifact
       uses: actions/upload-artifact@v2
       with:
         name: framework-dependent-linux-arm
-        path: /home/**/csharp/bin/Release/linux-arm/publish
+        path: ./**/csharp/bin/Release/linux-arm/publish
     - name: Upload framework-dependent-linux-x64 Artifact
       uses: actions/upload-artifact@v2
       with:
         name: framework-dependent-linux-x64
-        path: /home/**/csharp/bin/Release/linux-x64/publish
+        path: ./**/csharp/bin/Release/linux-x64/publish
     - name: Upload framework-dependent-osx-x64 Artifact
       uses: actions/upload-artifact@v2
       with:
         name: framework-dependent-osx-x64
-        path: /home/**/csharp/bin/Release/osx-x64/publish
+        path: ./**/csharp/bin/Release/osx-x64/publish
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
@@ -62,24 +62,24 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: self-contained-win-x64
-        path: /home/**/csharp/bin/Release/win-x64/publish
+        path: ./**/csharp/bin/Release/win-x64/publish
     - name: Upload self-contained-win-x86 Artifact
       uses: actions/upload-artifact@v2
       with:
         name: self-contained-win-x86
-        path: /home/**/csharp/bin/Release/win-x86/publish
+        path: ./**/csharp/bin/Release/win-x86/publish
     - name: Upload self-contained-linux-arm Artifact
       uses: actions/upload-artifact@v2
       with:
         name: self-contained-linux-arm
-        path: /home/**/csharp/bin/Release/linux-arm/publish
+        path: ./**/csharp/bin/Release/linux-arm/publish
     - name: Upload self-contained-linux-x64 Artifact
       uses: actions/upload-artifact@v2
       with:
         name: self-contained-linux-x64
-        path: /home/**/csharp/bin/Release/linux-x64/publish
+        path: ./**/csharp/bin/Release/linux-x64/publish
     - name: Upload self-contained-osx-x64 Artifact
       uses: actions/upload-artifact@v2
       with:
         name: self-contained-osx-x64
-        path: /home/**/csharp/bin/Release/osx-x64/publish
+        path: ./**/csharp/bin/Release/osx-x64/publish
