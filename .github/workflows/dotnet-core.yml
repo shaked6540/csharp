@@ -18,7 +18,7 @@ jobs:
     - name: Publish framework dependent
       run: |
         dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r win-x64
-        dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r win-x32
+        dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r win-x86
         dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r linux-arm
         dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r linux-x64
         dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r osx-x64
@@ -27,11 +27,11 @@ jobs:
       with:
         name: framework-dependent-win-x64
         path: bin/Release/netcoreapp3.1/win-x64/publish
-    - name: Upload win-x32 Artifact
+    - name: Upload win-x86 Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: framework-dependent-win-x32
-        path: bin/Release/netcoreapp3.1/win-x32/publish
+        name: framework-dependent-win-x86
+        path: bin/Release/netcoreapp3.1/win-x86/publish
     - name: Upload framework-dependent-linux-arm Artifact
       uses: actions/upload-artifact@v2
       with:
@@ -54,7 +54,7 @@ jobs:
     - name: Publish self contained
       run: |
         dotnet publish -c Release --self-contained true -p:PublishSingleFile=true -r win-x64
-        dotnet publish -c Release --self-contained true -p:PublishSingleFile=true -r win-x32
+        dotnet publish -c Release --self-contained true -p:PublishSingleFile=true -r win-x86
         dotnet publish -c Release --self-contained true -p:PublishSingleFile=true -r linux-arm
         dotnet publish -c Release --self-contained true -p:PublishSingleFile=true -r linux-x64
         dotnet publish -c Release --self-contained true -p:PublishSingleFile=true -r osx-x64
@@ -63,11 +63,11 @@ jobs:
       with:
         name: self-contained-win-x64
         path: bin/Release/netcoreapp3.1/win-x64/publish
-    - name: Upload self-contained-win-x32 Artifact
+    - name: Upload self-contained-win-x86 Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: self-contained-win-x32
-        path: bin/Release/netcoreapp3.1/win-x32/publish
+        name: self-contained-win-x86
+        path: bin/Release/netcoreapp3.1/win-x86/publish
     - name: Upload self-contained-linux-arm Artifact
       uses: actions/upload-artifact@v2
       with:
