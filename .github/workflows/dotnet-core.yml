@@ -24,5 +24,5 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: framework-dependent-win-x64
-        path: /csharp/bin/Release/win-x64/publish
+        path: csharp/bin/Release/netcoreapp3.1/win-x64/publish
 
