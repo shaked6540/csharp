@@ -2,9 +2,8 @@ name: Publish
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+      tags:
+      - '*'
 
 jobs:
   publish:
@@ -17,69 +16,9 @@ jobs:
         dotnet-version: 3.1.301
     - name: Publish framework dependent
       run: |
-        dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r win-x64
-        dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r win-x86
-        dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r linux-arm
-        dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r linux-x64
-        dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r osx-x64
-    - name: Upload framework-dependent-win-x64 Artifact
-      uses: actions/upload-artifact@v2
+        dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r win-x64 -o publish-framework-dependent-win-x64
+        dotnet publish -c Release --self-contained true -p:PublishSingleFile=true -r win-x64 -o publish-self-contained-win-x64
+    - uses: ncipollo/release-action@v1
       with:
-        name: framework-dependent-win-x64
-        path: csharp/bin/Release/netcoreapp3.1/win-x64/publish
-    - name: Upload framework-dependent-win-x86 Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: framework-dependent-win-x86
-        path: csharp/bin/Release/netcoreapp3.1/win-x86/publish
-    - name: Upload framework-dependent-linux-arm Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: framework-dependent-linux-arm
-        path: csharp/bin/Release/netcoreapp3.1/linux-arm/publish
-    - name: Upload framework-dependent-linux-x64 Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: framework-dependent-linux-x64
-        path: csharp/bin/Release/netcoreapp3.1/linux-x64/publish
-    - name: Upload framework-dependent-osx-x64 Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: framework-dependent-osx-x64
-        path: csharp/bin/Release/netcoreapp3.1/osx-x64/publish
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.301
-    - name: Publish self contained
-      run: |
-        dotnet publish -c Release --self-contained true -p:PublishSingleFile=true -r win-x64
-        dotnet publish -c Release --self-contained true -p:PublishSingleFile=true -r win-x86
-        dotnet publish -c Release --self-contained true -p:PublishSingleFile=true -r linux-arm
-        dotnet publish -c Release --self-contained true -p:PublishSingleFile=true -r linux-x64
-        dotnet publish -c Release --self-contained true -p:PublishSingleFile=true -r osx-x64
-    - name: Upload self-contained-win-x64 Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: self-contained-win-x64
-        path: csharp/bin/Release/netcoreapp3.1/win-x64/publish
-    - name: Upload self-contained-win-x86 Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: self-contained-win-x86
-        path: csharp/bin/Release/netcoreapp3.1/win-x86/publish
-    - name: Upload self-contained-linux-arm Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: self-contained-linux-arm
-        path: csharp/bin/Release/netcoreapp3.1/linux-arm/publish
-    - name: Upload self-contained-linux-x64 Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: self-contained-linux-x64
-        path: csharp/bin/Release/netcoreapp3.1/linux-x64/publish
-    - name: Upload self-contained-osx-x64 Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: self-contained-osx-x64
-        path: csharp/bin/Release/netcoreapp3.1/osx-x64/publish
+        artifacts: "publish-framework-dependent-win-x64/*,publish-self-contained-win-x64/*"
+        token: ${{ secrets.GITHUB_TOKEN }}
