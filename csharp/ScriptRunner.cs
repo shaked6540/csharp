@@ -38,7 +38,7 @@ namespace csharp
 
             var scriptRunner = new ScriptRunner(config);
 
-            var beforeScriptCode = "1+1";
+            string beforeScriptCode = null;
             if (config.BeforeScriptFile != null && File.Exists(config.BeforeScriptFile))
             {
                 try
@@ -51,7 +51,13 @@ namespace csharp
                 }
             }
 
-            await scriptRunner.CreateScriptAsync(beforeScriptCode, new Globals(scriptRunner)).ConfigureAwait(false);
+            await scriptRunner.CreateScriptAsync("1+1", new Globals(scriptRunner)).ConfigureAwait(false);
+
+            if (beforeScriptCode != null)
+            {
+                await scriptRunner.ContinueWithAsync(beforeScriptCode).ConfigureAwait(false);
+            }
+
             return scriptRunner;
         }
 
@@ -83,8 +89,48 @@ namespace csharp
 
         public async Task ContinueWithAsync(string code)
         {
-            script = await script.ContinueWithAsync(code).ConfigureAwait(false);
+            runScript:
+            try
+            {
+                script = await script.ContinueWithAsync(code).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains(": error CS1002: ; expected", StringComparison.Ordinal))
+                {
+                    // find the place where the semicolon is missing using the exception details
+                    var sub = ex.Message.Substring(0, ex.Message.IndexOf(':', StringComparison.Ordinal));
+                    var index = sub.IndexOf(',', StringComparison.Ordinal) + 1;
+                    var row = sub[1..(index - 1)];
+                    var col = sub[index..^1];
+                    if (int.TryParse(row, out var rowResult) && int.TryParse(col, out var colResult))
+                    {
+                        // since the number of rows doesnt indicate length, we need to get to the row-nth index of '\n'
+                        // in the code to determine in what line the semicolon is missing, and add the col number to that
+                        // to get the index of where the semicolon is missing in the code string
+                        var startIndex = code.NthIndexOf("\n", rowResult - 1) + colResult;
+                        code = code.Insert(startIndex, ";");
+                        goto runScript;
+                    }
+                }
 
+                if (ex.Message.Contains(": error CS1513: } expected", StringComparison.Ordinal))
+                {
+                    code = ReadUntilCurlyBracketsNumberMatch(code);
+                    goto runScript;
+                }
+
+                if (ex.Message.Contains(": error CS1733: Expected expression", StringComparison.Ordinal) ||
+                    ex.Message.Contains(": error CS1514: { expected", StringComparison.Ordinal))
+                {
+                    Console.WriteLine(Config.OpenCurlyBracket);
+                    code += $"\n{Config.OpenCurlyBracket}\n";
+                    code = ReadUntilCurlyBracketsNumberMatch(code);
+                    goto runScript;
+                }
+
+                throw new Exception(ex.Message, ex);
+            }
             if (script.ReturnValue != null)
                 Console.WriteLine(script.ReturnValue);
         }
@@ -106,46 +152,12 @@ namespace csharp
                     code = multiLineCode;
                 }
 
-                runScript:
                 try
                 {
                     await ContinueWithAsync(code).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
-                    if (ex.Message.Contains(": error CS1002: ; expected", StringComparison.Ordinal))
-                    {
-                        // find the place where the semicolon is missing using the exception details
-                        var sub = ex.Message.Substring(0, ex.Message.IndexOf(':', StringComparison.Ordinal));
-                        var index = sub.IndexOf(',', StringComparison.Ordinal) + 1;
-                        var row = sub[1..(index - 1)];
-                        var col = sub[index..^1];
-                        if (int.TryParse(row, out var rowResult) && int.TryParse(col, out var colResult))
-                        {
-                            // since the number of rows doesnt indicate length, we need to get to the row-nth index of '\n'
-                            // in the code to determine in what line the semicolon is missing, and add the col number to that
-                            // to get the index of where the semicolon is missing in the code string
-                            var startIndex = code.NthIndexOf("\n", rowResult - 1) + colResult;
-                            code = code.Insert(startIndex, ";");
-                            goto runScript;
-                        }
-                    }
-
-                    if (ex.Message.Contains(": error CS1513: } expected", StringComparison.Ordinal))
-                    {
-                        code = ReadUntilCurlyBracketsNumberMatch(code);
-                        goto runScript;
-                    }
-
-                    if (ex.Message.Contains(": error CS1733: Expected expression", StringComparison.Ordinal) ||
-                        ex.Message.Contains(": error CS1514: { expected", StringComparison.Ordinal))
-                    {
-                        Console.WriteLine(Config.OpenCurlyBracket);
-                        code += $"\n{Config.OpenCurlyBracket}\n";
-                        code = ReadUntilCurlyBracketsNumberMatch(code);
-                        goto runScript;
-                    }
-
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(ex.Message);
                     Console.ResetColor();
