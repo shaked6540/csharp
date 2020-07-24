@@ -21,7 +21,11 @@ Run c# code from the command line, like python or javascript.
 
 
 # Installing
-You don't need to do anything special to install `csharp`, just grab the latest version from the [releases](https://github.com/shaked6540/csharp/releases) page or build it by yourself and drop it in a folder. I recommend adding the executable location to `PATH`.
+You don't need to do anything special to install `csharp`, just go to [the actions page](https://github.com/shaked6540/csharp/actions), select the newest entry, download the version that matches your needs then extract it and run it. If you have .NET Core 3.1 installed, select the framework dependent version, if not, select the self contained version.
+
+Or build it by yourself and drop it in a folder. 
+
+I recommend adding the executable location to `PATH`.
 
 [Here is how to add a value to `PATH` on Linux](https://unix.stackexchange.com/a/26059)
 
