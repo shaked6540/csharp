@@ -27,9 +27,16 @@ You don't need to do anything special to install `csharp`, just grab the latest 
 
 [Here is how to add a value to `PATH` on Windows](https://docs.telerik.com/teststudio/features/test-runners/add-path-environment-variables)
 
+# Building
+1. Clone the project using git
+2. Open a commandline and run `dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r win-x64`.
+Replace `--self-contained false` to `--self-contained true` if you wish to build a self contained version of the program.
+Replace `win-x64` with your platform if you build for an OS other than windows.
+
 # Configuring
 
-`csharp` can be configured using a config file, simply place a 'Config.json' file in the same folder as the exectueable and add the following properties
+`csharp` can be configured using a config file, simply place a 'Config.json' file in the same folder as the exectueable and add the following properties.
+
 Note: you don't need to add all of them, they are all optional 
 
 - Assemblies: An array of strings containing file names of assemblies that will be loaded when `csharp` runs. Usually, there will be a bunch of dll files here. The assemblies must be in the same folder as the executeable
@@ -83,11 +90,6 @@ var myClass = new MyClass(5, "Hello")
 myClass.Print()
 ```
 
-# Building
-1. Clone the project using git
-2. Open a commandline and run `dotnet publish -c Release --self-contained false -p:PublishSingleFile=true -r win-x64`.
-Replace `--self-contained false` to `--self-contained true` if you wish to build a self contained version of the program.
-Replace `win-x64` with your platform if you build for an OS other than windows.
 
 # Installing on Android
 1. Install [termux](https://termux.com/). 
