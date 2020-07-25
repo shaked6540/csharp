@@ -93,6 +93,12 @@ namespace csharp
             try
             {
                 script = await script.ContinueWithAsync(code).ConfigureAwait(false);
+
+                if (script.ReturnValue != null)
+                {
+                    GetFullTypeName(script.ReturnValue.GetType());
+                    Console.WriteLine($" {JsonConvert.SerializeObject(script.ReturnValue, settings)}");
+                }
             }
             catch (Exception ex)
             {
@@ -131,8 +137,6 @@ namespace csharp
 
                 throw new Exception(ex.Message, ex);
             }
-            if (script.ReturnValue != null)
-                Console.WriteLine(script.ReturnValue);
         }
 
         public async Task ReadAndExectueAsync()
