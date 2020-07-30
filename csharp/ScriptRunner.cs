@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using MoreLinq;
 using Newtonsoft.Json; 
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace csharp
@@ -17,7 +19,21 @@ namespace csharp
     {
         private ScriptState script;
         private readonly Config config;
+
+        public List<Type> LoadedTypes { get; } = new List<Type>();
         public ImmutableArray<ScriptVariable> Variables => script.Variables;
+        public Dictionary<string, List<(MethodInfo, Type)>> ExtensionMethods { get; } = new Dictionary<string, List<(MethodInfo, Type)>>();
+
+        private StreamWriter scriptWriter;
+        private List<string> namespaces = new List<string>()
+        {
+            "System", "System.Collections", "System.Collections.Generic", "System.Diagnostics","System.IO", "System.Linq", "System.Math",
+            "System.Reflection", "System.Runtime", "System.Threading.Tasks", "System.Text",
+            "System.Diagnostics", "System.IO", "System.Text.RegularExpressions", "Newtonsoft.Json"
+        };
+        
+
+
 
         public static async Task<ScriptRunner> GetScriptRunner()
         {
@@ -83,7 +99,7 @@ namespace csharp
                 // create the script file and pass the stream writer to the custom reader/writer
                 var sw = File.CreateText($"{config.SavedScriptsLocation}/Script {latestScripNumber}.cs");
                 Console.SetOut(new CustomWriter(Console.Out, sw));
-                Console.SetIn(new CustomReader(Console.In, sw));
+                scriptWriter = sw;
             }
         }
 
@@ -96,7 +112,7 @@ namespace csharp
 
                 if (script.ReturnValue != null)
                 {
-                    GetFullTypeName(script.ReturnValue.GetType());
+                    PrintFullTypeName(script.ReturnValue.GetType());
                     Console.WriteLine($" {JsonConvert.SerializeObject(script.ReturnValue, settings)}");
                 }
             }
@@ -143,13 +159,13 @@ namespace csharp
         {
             string code;
             WriteInColor(config.NewlinePrefix, ConsoleColor.White);
-            while ((code = Console.ReadLine()) != config.EndKeyword)
+            while ((code = ReadLine.Read()) != config.EndKeyword)
             {
                 // if the multi line keyword was entered, read lines until the end keyword is entered
                 if (code == config.MultilineCodeKeyword)
                 {
                     string multiLineCode = string.Empty, singleLine;
-                    while ((singleLine = Console.ReadLine()) != config.EndKeyword)
+                    while ((singleLine = ReadLine.Read()) != config.EndKeyword)
                     {
                         multiLineCode += string.Concat(singleLine, "\n");
                     }
@@ -159,6 +175,9 @@ namespace csharp
                 try
                 {
                     await ContinueWithAsync(code).ConfigureAwait(false);
+
+                    if (config.SaveScripts)
+                        await scriptWriter.WriteLineAsync(code).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -166,9 +185,12 @@ namespace csharp
                     Console.WriteLine(ex.Message);
                     Console.ResetColor();
                 }
+                
                 WriteInColor(config.NewlinePrefix, ConsoleColor.White);
             }
         }
+
+
 
         private static string ReadUntilCurlyBracketsNumberMatch(string initalCode)
         {
@@ -176,49 +198,55 @@ namespace csharp
             while (code.Count(x => x.Equals(Config.OpenCurlyBracket)) != code.Count(x => x.Equals(Config.CloseCurlyBracket)))
             {
                 Console.Write(" ");
-                code += string.Concat(Console.ReadLine(), "\n");
+                code += string.Concat(ReadLine.Read(), "\n");
             }
             return code;
         }
 
-        private async Task CreateScriptAsync<T>(string code, T globals)
+        private void GetExtensionMethods()
         {
-            static IEnumerable<Assembly> GetAssemblies()
+            var extensionMethods = LoadedTypes
+                .Where(type => type.IsSealed && !type.IsGenericType && !type.IsNested)
+                .SelectMany(type => type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                                    .Where(method => method.IsDefined(typeof(ExtensionAttribute), false)).DistinctBy(x => x.Name))
+                .Select(x => (x, x.GetParameters()[0].ParameterType)).ToList();
+
+            foreach (var method in extensionMethods)
             {
-                var Assemblies = Assembly.GetEntryAssembly().GetReferencedAssemblies();
-                foreach (var a in Assemblies)
-                {
-                    var asm = Assembly.Load(a);
-                    yield return asm;
-                }
-                yield return Assembly.GetEntryAssembly();
-                yield return typeof(ILookup<string, string>).GetTypeInfo().Assembly;
+                ExtensionMethods.AddOrGet(GetNameWithoutGenericArity(method.ParameterType)).Add(method);
             }
 
-            var namespaces = new List<string>()
-            {
-                "System", "System.Collections", "System.Collections.Generic", "System.Diagnostics","System.IO", "System.Linq", "System.Math",
-                "System.Reflection", "System.Runtime", "System.Threading.Tasks", "System.Text",
-                "System.Diagnostics", "System.IO", "System.Text.RegularExpressions", "Newtonsoft.Json"
-            };
+        }
+
+        private async Task CreateScriptAsync<T>(string code, T globals)
+        {
             namespaces.AddRange(config.Namespaces);
 
             var userAssemblies= new List<Assembly>();
-
 
             foreach (var dll in config.Assemblies)
             {
                 try
                 {
-                    userAssemblies.Add(Assembly.LoadFrom($"{ExecuteablePath}/{dll}"));
+                    var assembly = Assembly.LoadFrom($"{ExecuteablePath}/{dll}");
+                    LoadedTypes.AddRange(assembly.GetTypes().Where(x => !x.Name.StartsWith("<", StringComparison.Ordinal)));
+                    userAssemblies.Add(assembly);
                 }
                 catch (Exception ex)
                 {
                     WriteInColor($"{ex.Message}\n", ConsoleColor.Red);
                 }
-                
             }
-            userAssemblies.AddRange(GetAssemblies());
+
+            var assemblies = GetAssemblies();
+            userAssemblies.AddRange(assemblies);
+
+            foreach (var assembly in assemblies)
+            {
+                LoadedTypes.AddRange(assembly.GetTypes().Where(x => namespaces.Contains(x.Namespace) && !x.IsSpecialName && !x.Name.StartsWith("<", StringComparison.Ordinal)));
+            }
+
+            GetExtensionMethods();
 
             var options = ScriptOptions.Default
                 .AddReferences(userAssemblies)
