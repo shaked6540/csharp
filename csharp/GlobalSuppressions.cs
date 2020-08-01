@@ -10,3 +10,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This method needs to be not static", Scope = "member", Target = "~M:cs.Globals.help(System.Type)")]
 [assembly: SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Code is never null", Scope = "member", Target = "~M:csharp.ScriptRunner.ContinueWithAsync(System.String)~System.Threading.Tasks.Task")]
 [assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:csharp.Globals.help(System.Type)")]
+[assembly: SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "<Pending>", Scope = "member", Target = "~M:csharp.Utilities.AddOrGet``2(System.Collections.Generic.IDictionary{``0,``1},``0)~``1")]

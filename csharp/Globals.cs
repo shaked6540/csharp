@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 
@@ -22,7 +21,7 @@ namespace csharp
             var variables = script.Variables;
             for (int i = 0; i < variables.Length; i++)
             {
-                GetFullTypeName(variables[i].Type);
+                PrintFullTypeName(variables[i].Type);
                 Console.Write($" {variables[i].Name}");
                 Console.Write(" = ");
                 try
@@ -63,7 +62,7 @@ namespace csharp
             foreach (var field in type.GetFields())
             {
                 WriteInColor($"{(field.IsPublic ? "public " : "private ")}{(field.IsStatic ? "static " : "")}", ConsoleColor.Blue);
-                GetFullTypeName(field.FieldType);
+                PrintFullTypeName(field.FieldType);
                 Console.WriteLine($" {field.Name}");
             }
 
@@ -73,7 +72,7 @@ namespace csharp
                 var get = prop.GetGetMethod();
                 var set = prop.GetSetMethod();
 
-                GetFullTypeName(prop.PropertyType);
+                PrintFullTypeName(prop.PropertyType);
                 Console.Write($" {prop.Name} {{ ");
 
                 if (get != null)
@@ -93,7 +92,7 @@ namespace csharp
             foreach (var method in type.GetMethods().Where(x => !x.IsSpecialName))
             {
                 WriteInColor($"{(method.IsPublic ? "public " : "private ")}{(method.IsStatic ? "static " : "")}", ConsoleColor.Blue);
-                GetFullTypeName(method.ReturnType);
+                PrintFullTypeName(method.ReturnType);
                 Console.Write($" {method.Name}(");
                 var parameters = method.GetParameters();
                 for (int i = 0; i < parameters.Length; i++)
@@ -101,7 +100,7 @@ namespace csharp
                     if (parameters[i].IsOut)
                         WriteInColor("out ", ConsoleColor.Blue);
 
-                    GetFullTypeName(parameters[i].ParameterType);
+                    PrintFullTypeName(parameters[i].ParameterType);
                     Console.Write($" {parameters[i].Name}");
 
                     if (parameters[i].HasDefaultValue)
@@ -118,7 +117,7 @@ namespace csharp
             foreach (var ev in type.GetEvents())
             {
                 WriteInColor($"public event ", ConsoleColor.Blue);
-                GetFullTypeName(ev.EventHandlerType);
+                PrintFullTypeName(ev.EventHandlerType);
                 Console.WriteLine($" {ev.Name}");
             }
         }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace csharp
 {
@@ -9,6 +10,8 @@ namespace csharp
         {
             // initalize the script runner
             var script = await ScriptRunner.GetScriptRunner().ConfigureAwait(false);
+            ReadLine.AutoCompletionHandler = new AutoCompletionHandler(script);
+            ReadLine.HistoryEnabled = true;
 
             // treat arguments as code, join all argument by spaces and execute them
             if (args.Length > 0)
