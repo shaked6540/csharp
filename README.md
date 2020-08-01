@@ -11,6 +11,8 @@ Run c# code from the command line, like python or javascript.
 - Save scripts
 - Single executeable, ready to run out of the box
 - Supports Windows, Linux, macOS, and Android (Instructions to install on android will be at the bottom)
+- Autocomplete when pressing tab
+
 ## Built-in functions
 ### help
 `help` is a function that takes any object or a [`Type`](https://docs.microsoft.com/en-us/dotnet/api/system.type?view=netcore-3.1) and prints all its methods, properties, fields and events. It's useful because there is no auto completion in the command line, and sometimes its faster to just type `help(typeof(int))` than to open the documentaion.
