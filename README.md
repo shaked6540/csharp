@@ -101,4 +101,4 @@ myClass.Print()
 1. Install [termux](https://termux.com/). 
 2. Install ubunutu using [this guide](https://github.com/MFDGaming/ubuntu-in-termux)
 3. (Optional) If you want to use the framework dependent build of the program, install .NET Core 3.1 from [here (32bit)](https://dotnet.microsoft.com/download/dotnet-core/thank-you/sdk-3.1.302-linux-arm32-binaries) or [here (64bit)](https://dotnet.microsoft.com/download/dotnet-core/thank-you/sdk-3.1.302-linux-arm64-binaries) and follow the instructions provided
-4. Thats it! run the program. I recommend adding the executeable location to `PATH` so you don't need to navigate to it every time. I also recommend adding the `startubuntu.sh` script to `PATH` or create an alias for it in `.bashrc`
+4. Thats it! run the program. I recommend adding the executeable location to `PATH` so you don't need to navigate to it every time. I also recommend adding the `startubuntu.sh` script to `PATH` or create an alias for it in `.bashrc`.
