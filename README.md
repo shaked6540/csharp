@@ -43,7 +43,7 @@ Replace `win-x64` with your platform if you build for an OS other than windows.
 
 `csharp` can be configured using a config file, simply place a 'Config.json' file in the same folder as the exectueable and add the following properties.
 
-Note: you don't need to add all of them, they are all optional 
+Note: you don't need to add all of them, they are all optional. 
 
 - Assemblies: An array of strings containing file names of assemblies that will be loaded when `csharp` runs. Usually, there will be a bunch of dll files here. The assemblies must be in the same folder as the executeable
 - Namespaces: An array of strings containing names of namespaces that will be included when running `csharp`. This is equivalent to "using x;"
