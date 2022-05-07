@@ -87,7 +87,7 @@ class MyClass
     
     public void Print() 
     {
-        cw($"{myInt} - {myString}")
+        cw($"{myInt} - {myString}");
     }
     
 }
